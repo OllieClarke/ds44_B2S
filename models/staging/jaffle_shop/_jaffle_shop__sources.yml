@@ -8,10 +8,10 @@ sources:
       freshness:
         warn_after:
           count: 5
-          period: hour
+          period: day
         error_after:
           count: 24
-          period: hour
+          period: day
 
 
     tables:

@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 {{
     config(
         materialized = 'view'

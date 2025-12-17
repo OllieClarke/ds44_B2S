@@ -1,0 +1,73 @@
+version: 2
+
+sources:
+  - name: stripe
+    description: "Source data from stripe payment system"
+    database: raw
+    config:
+      freshness:
+        warn_after:
+          count: 5
+          period: hour
+        error_after:
+          count: 24
+          period: hour
+
+    tables:
+      - name: payment
+        description: "all payments from stripe"
+        columns:
+          - name: id
+            data_type: number
+            description: "Primary key, and identifier of each payment"
+            data_tests:
+              - unique
+              - not_null
+
+          - name: orderid
+            data_type: number
+            description: "foreign key which links to jaffle shop order data"
+            data_tests:
+              - relationships:
+                  arguments:
+                    field: id
+                    to: source('jaffle_shop','orders')
+
+
+          - name: paymentmethod
+            data_type: varchar
+            description: "The way in which the customer paid"
+            data_tests:
+              - accepted_values:
+                  arguments:
+                    values:
+                      - credit_card
+                      - bank_transfer
+                      - gift_card
+                      - coupon
+
+          - name: status
+            data_type: varchar
+            description: "The status of the payment, success or fail"
+            data_tests:
+              - accepted_values:
+                  arguments:
+                    values:
+                      - success
+                      - fail
+
+
+          - name: amount
+            data_type: number
+            description: "Payment amount in cents"
+
+
+          - name: created
+            data_type: date
+            description: "When the payment was created"
+            data_tests:
+              - not_null
+
+          - name: _batched_at
+            data_type: timestamp_ntz
+            description: "system generated timestamp of upload time"
